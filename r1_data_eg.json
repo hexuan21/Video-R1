@@ -1,0 +1,42 @@
+[
+    {
+        "problem_id": 1,
+        "problem": "Based on the figure, what role does the quartz cylinder play in the experimental setup?",
+        "data_type": "image",
+        "problem_type": "multiple choice",
+        "options": [
+            "A) It is used to focus the laser for the LDV",
+            "B) It is the main weight that is being measured",
+            "C) It encases the piezo-actuator to insulate it",
+            "D) It serves as a medium for the laser to pass through for measurements"
+        ],
+        "solution": "<answer>D</answer>",
+        "path": "./Knowledge/ArxivQA/images/1702.04756_0.jpg",
+        "data_source": ""
+    },
+    {
+        "problem_id": 2,
+        "problem": "What appears on the screen in Russian during the missile's ascent?",
+        "data_type": "video",
+        "problem_type": "multiple choice",
+        "options": [
+            "A. A YouTube subscription notification",
+            "B. A military command",
+            "C. A warning message",
+            "D. A weather update"
+        ],
+        "solution": "<answer>A</answer>",
+        "path": "./LLaVA-Video-178K/liwei_youtube_videos/videos/youtube_video_2024/ytb_7nRmsEw7nsE.mp4",
+        "data_source": "LLaVA-Video-178K/30_60_s_youtube_v0_1"
+    },
+    {
+        "problem_id": 6,
+        "problem": "What type of swimsuit is the woman wearing?\nAnswer the question using a single word or phrase.",
+        "data_type": "image",
+        "problem_type": "free-form",
+        "options": [],
+        "solution": "<answer>Wetsuit</answer>",
+        "path": "./Spatial/Spacellava/image_11755.png",
+        "data_source": "Spacellava"
+    }
+]

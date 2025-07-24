@@ -119,6 +119,46 @@ def accuracy_reward(completions, solution, **kwargs):
             gt_ans = extract_answer(sol)
             if question_type == "multiple choice":
                 reward = 1.0 if output_ans.strip() == gt_ans.strip() else 0.0
+                
+            elif question_type == "video eval":
+                pattern = r"visual quality:\s*(\d+).*?text-to-video alignment:\s*(\d+).*?physical/common-sense consistency:\s*(\d+)"
+                match_gt = re.search(pattern, gt_ans, re.DOTALL | re.IGNORECASE)
+                if match_gt:
+                    v_score_gt = int(match_gt.group(1))
+                    t_score_gt = int(match_gt.group(2))
+                    p_score_gt = int(match_gt.group(3))
+                else:
+                    v_score_gt = t_score_gt = p_score_gt = None
+                
+                match_output = re.search(pattern, output_ans, re.DOTALL | re.IGNORECASE)
+                if match_gt:
+                    v_score_model = int(match_output.group(1))
+                    t_score_model = int(match_output.group(2))
+                    p_score_model = int(match_output.group(3))
+                else:
+                    v_score_model = t_score_model = p_score_model = None
+                
+                if None in [v_score_gt, t_score_gt, p_score_gt, v_score_model, t_score_model, p_score_model]:
+                    reward = 0.0
+                
+                if abs(v_score_gt-v_score_model) + abs(v_score_gt-v_score_model) + abs(v_score_gt-v_score_model) == 0:
+                    reward = 1.0
+                elif abs(v_score_gt-v_score_model) + abs(v_score_gt-v_score_model) + abs(v_score_gt-v_score_model) <= 1:
+                    reward = 0.75
+                elif abs(v_score_gt-v_score_model) + abs(v_score_gt-v_score_model) + abs(v_score_gt-v_score_model) <= 2 \
+                    and abs(v_score_gt-v_score_model) <= 1 \
+                    and abs(t_score_gt-t_score_model) <= 1 \
+                    and abs(p_score_gt-p_score_model) <= 1:
+                    reward = 0.5
+                elif abs(v_score_gt-v_score_model) + abs(v_score_gt-v_score_model) + abs(v_score_gt-v_score_model) <= 3 \
+                    and abs(v_score_gt-v_score_model) <= 1 \
+                    and abs(t_score_gt-t_score_model) <= 1 \
+                    and abs(p_score_gt-p_score_model) <= 1:
+                        reward = 0.25
+                else:
+                    reward = 0.0
+                    
+                
             elif question_type == "numerical":
                 gt_has_decimal = ("." in gt_ans) or ("," in gt_ans)
                 out_has_decimal = ("." in output_ans) or ("," in output_ans)
@@ -217,6 +257,7 @@ def main(script_args, training_args, model_args):
 
     TYPE_TEMPLATE = {
         "multiple choice": " Please provide only the single option letter (e.g., A, B, C, D, etc.) within the <answer> </answer> tags.",
+        "video eval": " Please provide quality score of 3 dimensions with the format 'visual quality: <score>; text-to-video alignment: <score>; physical/common-sense consistency: <score>', and within the <answer> </answer> tags.",
         "numerical": " Please provide the numerical value (e.g., 42 or 3.14) within the <answer> </answer> tags.",
         "OCR": " Please transcribe text from the image/video clearly and provide your text answer within the <answer> </answer> tags.",
         "free-form": " Please provide your text answer within the <answer> </answer> tags.",
