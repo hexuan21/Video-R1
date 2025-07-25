@@ -176,3 +176,5 @@ wandb/
 scripts/
 checkpoints/
 .vscode/
+
+data*/
