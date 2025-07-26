@@ -13,7 +13,7 @@ DATASET_NAME="./data_vs2_grpo/grpo_17k.json"
 RUN_NAME="vs2_qwen2_5vl_grpo"
 LOG_DIR="./log/vs2_grpo"
 
-CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7 torchrun --nproc_per_node="8" \
+CUDA_VISIBLE_DEVICES=0,1,2,3 torchrun --nproc_per_node="4" \
     --nnodes="1" \
     --node_rank="0" \
     --master_addr="127.0.0.1" \
