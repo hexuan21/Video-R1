@@ -510,7 +510,7 @@ class Qwen2VLGRPOVLLMTrainerModified(Trainer):
                     padding_side="left",
                     add_special_tokens=False,
                 )
-                shuffled_mm_data = [[self.accelerator.process_index, data_type, image_inputs if image_inputs else video_inputs]]
+                shuffled_mm_data = [[self.accelerator.process_index, data_type, image_inputs if image_inputs else shuffled_video_input]]
                 shuffled_prompt_inputs = super()._prepare_inputs(shuffled_prompt_inputs)
                 shuffled_prompt_ids, shuffled_prompt_mask = shuffled_prompt_inputs["input_ids"], shuffled_prompt_inputs["attention_mask"]
                 if self.max_prompt_length is not None:
