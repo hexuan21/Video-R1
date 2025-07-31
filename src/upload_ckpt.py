@@ -1,44 +1,72 @@
-from huggingface_hub import HfApi, upload_file
 import os
+import argparse
 import shutil
-base_model_or_dir = "/home/user/.cache/huggingface/hub/models--videoscore2--vs2_qwen2_5vl_sft_17k_2e-4_2fps_512_512_8192/snapshots/ab4add7aa8f3c4da96f017b06e3d201be9302264"
-checkpoint_dir = "/data/xuan/workdir/Video-R1/src/r1-v/log/Qwen2.5-VL-7B-GRPO/checkpoint-1000"
-repo_id = f"videoscore2/vs2_qwen2_5vl_grpo_17k_try_1e-6_1000"
-upload_dir = "./model_upload_dir"
-token=os.environ["HF_TOKEN"]
-repo_type="model"
+from huggingface_hub import HfApi, upload_file
+from huggingface_hub.utils import RepositoryNotFoundError
 
-if os.path.exists(upload_dir):
-    shutil.rmtree(upload_dir)
-
-shutil.copytree(base_model_or_dir, upload_dir)
-shutil.copy(f"{checkpoint_dir}/model-00001-of-00004.safetensors", upload_dir)
-shutil.copy(f"{checkpoint_dir}/model-00002-of-00004.safetensors", upload_dir)
-shutil.copy(f"{checkpoint_dir}/model-00003-of-00004.safetensors", upload_dir)
-shutil.copy(f"{checkpoint_dir}/model-00004-of-00004.safetensors", upload_dir)
-shutil.copy(f"{checkpoint_dir}/model.safetensors.index.json", upload_dir)
-
-
-api = HfApi(token=token)
-try:
-    api.repo_info(repo_id=repo_id, repo_type=repo_type)
-    print(f"✅ Repository '{repo_id}' already exists.")
-except Exception as e:
-    print(f"🚧 Repository '{repo_id}' not found. Creating a new public repo...")
-    api.create_repo(
-        repo_id=repo_id,
-        token=token,
-        repo_type=repo_type,
-        private=False
+def upload_model_with_checkpoint(checkpoint_dir: str, repo_id: str, token: str):
+    # Paths
+    base_model_or_dir = os.path.expanduser(
+        "~/.cache/huggingface/hub/models--videoscore2--vs2_qwen2_5vl_sft_17k_2e-4_2fps_512_512_8192/snapshots/ab4add7aa8f3c4da96f017b06e3d201be9302264"
     )
+    upload_dir = "./model_upload_dir"
 
-for filename in os.listdir(upload_dir):
-    local_path = os.path.join(upload_dir, filename)
-    if os.path.isfile(local_path):
-        print(f"Uploading {filename}...")
-        upload_file(
-            path_or_fileobj=local_path,
-            path_in_repo=filename,         
+    # Clean upload dir
+    if os.path.exists(upload_dir):
+        shutil.rmtree(upload_dir)
+    shutil.copytree(base_model_or_dir, upload_dir)
+
+    # Copy checkpoint shards
+    shards = [
+        "model-00001-of-00004.safetensors",
+        "model-00002-of-00004.safetensors",
+        "model-00003-of-00004.safetensors",
+        "model-00004-of-00004.safetensors",
+        "model.safetensors.index.json"
+    ]
+    for shard in shards:
+        src = os.path.join(checkpoint_dir, shard)
+        dst = os.path.join(upload_dir, shard)
+        shutil.copy(src, dst)
+
+    # Create repo if not exists
+    api = HfApi(token=token)
+    try:
+        api.repo_info(repo_id=repo_id, repo_type="model")
+        print(f"✅ Repository '{repo_id}' already exists.")
+    except RepositoryNotFoundError:
+        print(f"🚧 Repository '{repo_id}' not found. Creating a new public repo...")
+        api.create_repo(
             repo_id=repo_id,
-            repo_type="model"
+            token=token,
+            repo_type="model",
+            private=False
         )
+
+    # Upload all files
+    for filename in os.listdir(upload_dir):
+        local_path = os.path.join(upload_dir, filename)
+        if os.path.isfile(local_path):
+            print(f"📤 Uploading {filename} ...")
+            upload_file(
+                path_or_fileobj=local_path,
+                path_in_repo=filename,
+                repo_id=repo_id,
+                repo_type="model",
+                token=token,
+                commit_message=f"Upload {filename}"
+            )
+
+    print(f"✅ Upload completed to {repo_id}.")
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Upload safetensors shards + base model to Hugging Face Hub.")
+    parser.add_argument("--checkpoint_dir", type=str, required=True, help="Path to checkpoint directory")
+    parser.add_argument("--repo_id", type=str, required=True, help="HF repo ID")
+    args = parser.parse_args()
+
+    token = os.environ.get("HF_TOKEN")
+    if not token:
+        raise ValueError("❌ HF_TOKEN environment variable not found. Please set it before running this script.")
+
+    upload_model_with_checkpoint(args.checkpoint_dir, args.repo_id, token)
