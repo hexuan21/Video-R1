@@ -1,18 +1,20 @@
 cd src/r1-v
 
-export DEBUG_MODE="true" # Enable Debug if you want to see the rollout of model during RL
-export LOG_PATH="./debug_log_grpo_17k_reward_2.txt"
+
 
 # For resume training:  --resume_from_checkpoint Model_Path \
 # Set temporal to choose between T-GRPO and GRPO, and len_control to enable or disable the length control reward.
 
 # Qwen/Qwen2.5-VL-7B-Instruct
+export DEBUG_MODE="true" # Enable Debug if you want to see the rollout of model during RL
+export LOG_PATH="./debug_log_grpo_17k_reward_3.txt"
+
 SFT_Model_Path=videoscore2/vs2_qwen2_5vl_sft_17k_2e-4_2fps_512_512_8192
 DATASET_NAME=./Video-R1-data/grpo_17k.json
-OUTPUT_DIR=./log/vs2_qwen2_5vl_grpo_17k_reward_2
-RUN_NAME=vs2_qwen2_5vl_grpo_17k_reward_2
+OUTPUT_DIR=./log/vs2_qwen2_5vl_grpo_17k_reward_3
+RUN_NAME=vs2_qwen2_5vl_grpo_17k_reward_3
 
-CUDA_VISIBLE_DEVICES=4,5,6,7 torchrun --nproc_per_node="4" \
+CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7 torchrun --nproc_per_node="8" \
     --nnodes="1" \
     --node_rank="0" \
     --master_addr="127.0.0.1" \
