@@ -115,10 +115,48 @@ def accuracy_reward(completions, solution, **kwargs):
     for content, sol in zip(contents, solution):
     
         try:
-            output_ans = extract_answer(content)
+            # output_ans = extract_answer(content)
+            output_ans = content
             gt_ans = extract_answer(sol)
             if question_type == "multiple choice":
                 reward = 1.0 if output_ans.strip() == gt_ans.strip() else 0.0
+                
+            elif question_type == "video eval":
+                pattern = r"visual quality:\s*(\d+).*?text-to-video alignment:\s*(\d+).*?physical/common-sense consistency:\s*(\d+)"
+                match_gt = re.search(pattern, gt_ans, re.DOTALL | re.IGNORECASE)
+                if match_gt:
+                    v_gt = int(match_gt.group(1))
+                    t_gt = int(match_gt.group(2))
+                    p_gt = int(match_gt.group(3))
+                else:
+                    v_gt = t_gt = p_gt = None
+                match_out = re.search(pattern, output_ans, re.DOTALL | re.IGNORECASE)
+                if match_out:
+                    v_out = int(match_out.group(1))
+                    t_out = int(match_out.group(2))
+                    p_out = int(match_out.group(3))
+                else:
+                    v_out = t_out = p_out = None
+                print(f"gt :{v_gt} {t_gt} {p_gt}")
+                print(f"out:{v_out} {t_out} {p_out}")
+                
+                if None in [v_gt, t_gt, p_gt, v_out, t_out, p_out]:
+                    reward = 0.0
+                else:
+                    if abs(v_gt-v_out) <=0 and abs(t_gt-t_out) <= 0 and abs(p_gt-p_out) <= 0:
+                        reward = 1.0
+                    elif abs(v_gt-v_out) <=1 and abs(t_gt-t_out) <= 1 and abs(p_gt-p_out) <= 1 \
+                        and abs(v_gt-v_out)+abs(t_gt-t_out)+abs(p_gt-p_out) <= 1:
+                        reward = 0.75
+                    elif abs(v_gt-v_out) <=1 and abs(t_gt-t_out) <= 1 and abs(p_gt-p_out) <= 1 \
+                        and abs(v_gt-v_out)+abs(t_gt-t_out)+abs(p_gt-p_out) <= 2:
+                        reward = 0.5
+                    elif abs(v_gt-v_out) <=1 and abs(t_gt-t_out) <= 1 and abs(p_gt-p_out) <= 1 \
+                        and abs(v_gt-v_out)+abs(t_gt-t_out)+abs(p_gt-p_out) <= 3:
+                        reward = 0.25
+                    else:
+                        reward = 0.0
+                
             elif question_type == "numerical":
                 gt_has_decimal = ("." in gt_ans) or ("," in gt_ans)
                 out_has_decimal = ("." in output_ans) or ("," in output_ans)
@@ -167,7 +205,8 @@ def accuracy_reward(completions, solution, **kwargs):
 
 def format_reward(completions, **kwargs):
     """Reward function that checks if the completion has a specific format."""
-    pattern = r"<think>.*?</think>\s*<answer>.*?</answer>"
+    # pattern = r"<think>.*?</think>\s*<answer>.*?</answer>"
+    pattern = r"<think>.*?</think>"
     completion_contents = [completion[0]["content"] for completion in completions]
     matches = [re.fullmatch(pattern, content, re.DOTALL) for content in completion_contents]
     return [1.0 if match else 0.0 for match in matches]
@@ -216,6 +255,7 @@ def main(script_args, training_args, model_args):
     )
 
     TYPE_TEMPLATE = {
+        "video eval": "Please provide the quality scores (from 1 to 5, higher the better).",
         "multiple choice": " Please provide only the single option letter (e.g., A, B, C, D, etc.) within the <answer> </answer> tags.",
         "numerical": " Please provide the numerical value (e.g., 42 or 3.14) within the <answer> </answer> tags.",
         "OCR": " Please transcribe text from the image/video clearly and provide your text answer within the <answer> </answer> tags.",

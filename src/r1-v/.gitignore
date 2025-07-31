@@ -176,3 +176,7 @@ wandb/
 scripts/
 checkpoints/
 .vscode/
+
+Video-R1-data
+Video-R1-data/*
+log/
