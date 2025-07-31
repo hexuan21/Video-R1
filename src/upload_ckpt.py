@@ -4,12 +4,12 @@ import shutil
 from huggingface_hub import HfApi, upload_file
 from huggingface_hub.utils import RepositoryNotFoundError
 
-def upload_model_with_checkpoint(checkpoint_dir: str, repo_id: str, token: str):
+def upload_model_with_checkpoint(checkpoint_dir: str, repo_id: str, base_dir: str, token: str):
     # Paths
     base_model_or_dir = os.path.expanduser(
-        "~/.cache/huggingface/hub/models--videoscore2--vs2_qwen2_5vl_sft_17k_2e-4_2fps_512_512_8192/snapshots/ab4add7aa8f3c4da96f017b06e3d201be9302264"
+        base_dir,
     )
-    upload_dir = "./model_upload_dir"
+    upload_dir = "src/model_upload_dir"
 
     # Clean upload dir
     if os.path.exists(upload_dir):
@@ -63,10 +63,11 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Upload safetensors shards + base model to Hugging Face Hub.")
     parser.add_argument("--checkpoint_dir", type=str, required=True, help="Path to checkpoint directory")
     parser.add_argument("--repo_id", type=str, required=True, help="HF repo ID")
+    parser.add_argument("--base_dir", type=str, required=True)
     args = parser.parse_args()
 
     token = os.environ.get("HF_TOKEN")
     if not token:
         raise ValueError("❌ HF_TOKEN environment variable not found. Please set it before running this script.")
 
-    upload_model_with_checkpoint(args.checkpoint_dir, args.repo_id, token)
+    upload_model_with_checkpoint(args.checkpoint_dir, args.repo_id, args.base_dir, token)
