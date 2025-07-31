@@ -2,8 +2,8 @@ from huggingface_hub import HfApi, upload_file
 import os
 import shutil
 base_model_or_dir = "/home/user/.cache/huggingface/hub/models--videoscore2--vs2_qwen2_5vl_sft_17k_2e-4_2fps_512_512_8192/snapshots/ab4add7aa8f3c4da96f017b06e3d201be9302264"
-checkpoint_dir = "/data/xuan/workdir/Video-R1/src/r1-v/log/Qwen2.5-VL-7B-GRPO/checkpoint-800"
-repo_id = f"videoscore2/vs2_qwen2_5vl_grpo_17k_try_1e-6_800"
+checkpoint_dir = "/data/xuan/workdir/Video-R1/src/r1-v/log/Qwen2.5-VL-7B-GRPO/checkpoint-1000"
+repo_id = f"videoscore2/vs2_qwen2_5vl_grpo_17k_try_1e-6_1000"
 upload_dir = "./model_upload_dir"
 token=os.environ["HF_TOKEN"]
 repo_type="model"

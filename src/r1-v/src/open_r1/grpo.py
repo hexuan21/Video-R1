@@ -143,17 +143,20 @@ def accuracy_reward(completions, solution, **kwargs):
                 if None in [v_gt, t_gt, p_gt, v_out, t_out, p_out]:
                     reward = 0.0
                 else:
-                    if abs(v_gt-v_out) <=0 and abs(t_gt-t_out) <= 0 and abs(p_gt-p_out) <= 0:
+                    if abs(v_gt-v_out) == 0 and abs(t_gt-t_out) == 0 and abs(p_gt-p_out) == 0:
                         reward = 1.0
                     elif abs(v_gt-v_out) <=1 and abs(t_gt-t_out) <= 1 and abs(p_gt-p_out) <= 1 \
                         and abs(v_gt-v_out)+abs(t_gt-t_out)+abs(p_gt-p_out) <= 1:
-                        reward = 0.75
+                        reward = 0.6
                     elif abs(v_gt-v_out) <=1 and abs(t_gt-t_out) <= 1 and abs(p_gt-p_out) <= 1 \
                         and abs(v_gt-v_out)+abs(t_gt-t_out)+abs(p_gt-p_out) <= 2:
-                        reward = 0.5
-                    elif abs(v_gt-v_out) <=1 and abs(t_gt-t_out) <= 1 and abs(p_gt-p_out) <= 1 \
-                        and abs(v_gt-v_out)+abs(t_gt-t_out)+abs(p_gt-p_out) <= 3:
-                        reward = 0.25
+                        reward = 0.2
+                    # elif abs(v_gt-v_out) <=1 and abs(t_gt-t_out) <= 1 and abs(p_gt-p_out) <= 1 \
+                    #     and abs(v_gt-v_out)+abs(t_gt-t_out)+abs(p_gt-p_out) <= 2:
+                    #     reward = 0.5
+                    # elif abs(v_gt-v_out) <=1 and abs(t_gt-t_out) <= 1 and abs(p_gt-p_out) <= 1 \
+                    #     and abs(v_gt-v_out)+abs(t_gt-t_out)+abs(p_gt-p_out) <= 3:
+                    #     reward = 0.25
                     else:
                         reward = 0.0
                 
