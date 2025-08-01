@@ -11,10 +11,10 @@ export LOG_PATH="./debug_log_grpo_17k_reward_3.txt"
 
 SFT_Model_Path=videoscore2/vs2_qwen2_5vl_sft_17k_2e-4_2fps_512_512_8192
 DATASET_NAME=./Video-R1-data/grpo_17k.json
-OUTPUT_DIR=./log/vs2_qwen2_5vl_grpo_17k_reward_3
-RUN_NAME=vs2_qwen2_5vl_grpo_17k_reward_3
+OUTPUT_DIR=./log/vs2_qwen2_5vl_grpo_17k_1e-6_reward_3
+RUN_NAME=vs2_qwen2_5vl_grpo_17k_1e-6_reward_3
 
-CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7 torchrun --nproc_per_node="8" \
+CUDA_VISIBLE_DEVICES=4,5,6,7 torchrun --nproc_per_node="4" \
     --nnodes="1" \
     --node_rank="0" \
     --master_addr="127.0.0.1" \
