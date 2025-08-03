@@ -14,11 +14,13 @@ DATASET_NAME=./Video-R1-data/grpo_17k.json
 OUTPUT_DIR=./log/vs2_qwen2_5vl_grpo_17k_1e-6_reward_3
 RUN_NAME=vs2_qwen2_5vl_grpo_17k_1e-6_reward_3
 
+wandb login
+
 CUDA_VISIBLE_DEVICES=4,5,6,7 torchrun --nproc_per_node="4" \
     --nnodes="1" \
     --node_rank="0" \
     --master_addr="127.0.0.1" \
-    --master_port="12365" \
+    --master_port="12366" \
     src/open_r1/grpo.py \
     --output_dir ${OUTPUT_DIR} \
     --model_name_or_path ${SFT_Model_Path} \
@@ -32,7 +34,6 @@ CUDA_VISIBLE_DEVICES=4,5,6,7 torchrun --nproc_per_node="4" \
     --lr_scheduler_type "cosine" \
     --weight_decay 0.01 \
     --bf16 \
-    --logging_steps 1 \
     --gradient_checkpointing true \
     --temporal false \
     --len_control true \
@@ -40,8 +41,13 @@ CUDA_VISIBLE_DEVICES=4,5,6,7 torchrun --nproc_per_node="4" \
     --max_pixels 401408 \
     --num_train_epochs 1 \
     --run_name ${RUN_NAME} \
-    --save_steps 100 \
+    --report_to wandb \
+    --log_completions true \
+    --logging_steps 5 \
+    --save_steps 200 \
     --beta 0.04 \
     --max_grad_norm 5 \
     --save_only_model false \
+    --resume_from_checkpoint log/vs2_qwen2_5vl_grpo_17k_1e-6_reward_3/checkpoint-3200 \
     --num_generations 8  # number of outputs G in grpo, reduce it would lead to faster training and smaller memory cost but higher variance  
+    
