@@ -12,6 +12,8 @@ export LOCAL_RANK=$(($RANK % $MLP_WORKER_GPU))
 export NCCL_BLOCKING_WAIT=1
 export NCCL_ASYNC_ERROR_HANDLING=1
 export NCCL_TIMEOUT=3600
+export NCCL_DEBUG=INFO
+export NCCL_IB_DISABLE=1 
 
 unset https_proxy; unset http_proxy
 export https_proxy="http://100.64.117.161:3128"

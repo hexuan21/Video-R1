@@ -9,10 +9,10 @@ cd src/r1-v
 export DEBUG_MODE="true" # Enable Debug if you want to see the rollout of model during RL
 export LOG_PATH="./debug_log_grpo_17k_base960-720_reward_3_temporal.txt"
 
-SFT_Model_Path=videoscore2/vs2_qwen2_5vl_sft_17k_2e-4_2fps_960_720_8192
+SFT_Model_Path=videoscore2/vs2_qwen2_5vl_sft_17k_2e-4_2fps_768_768_8192
 DATASET_NAME=./Video-R1-data/grpo_17k.json
 
-RUN_NAME=vs2_qwen2_5vl_grpo_17k_1e-6_base960-720_reward_3_temporal
+RUN_NAME=vs2_qwen2_5vl_grpo_17k_1e-6_base768-768_reward_3_temporal
 OUTPUT_DIR="./log/$RUN_NAME"
 
 wandb login
