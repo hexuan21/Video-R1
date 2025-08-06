@@ -7,16 +7,16 @@ cd src/r1-v
 
 # Qwen/Qwen2.5-VL-7B-Instruct
 export DEBUG_MODE="true" # Enable Debug if you want to see the rollout of model during RL
-export LOG_PATH="./debug_log_grpo_17k_reward_3.txt"
+export LOG_PATH="./debug_log_grpo_17k_base768-768_reward_3_temporal.txt"
 
-SFT_Model_Path=videoscore2/vs2_qwen2_5vl_sft_17k_2e-4_2fps_512_512_8192
+SFT_Model_Path=videoscore2/vs2_qwen2_5vl_sft_17k_2e-4_2fps_768_768_8192
 DATASET_NAME=./Video-R1-data/grpo_17k.json
-OUTPUT_DIR=./log/vs2_qwen2_5vl_grpo_17k_1e-6_reward_3
-RUN_NAME=vs2_qwen2_5vl_grpo_17k_1e-6_reward_3
+OUTPUT_DIR=./log/vs2_qwen2_5vl_grpo_17k_1e-6_base768-768_reward_3_temporal
+RUN_NAME=vs2_qwen2_5vl_grpo_17k_1e-6_base768-768_reward_3_temporal
 
 wandb login
 
-CUDA_VISIBLE_DEVICES=4,5,6,7 torchrun --nproc_per_node="4" \
+CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7 torchrun --nproc_per_node="8" \
     --nnodes="1" \
     --node_rank="0" \
     --master_addr="127.0.0.1" \
@@ -27,7 +27,7 @@ CUDA_VISIBLE_DEVICES=4,5,6,7 torchrun --nproc_per_node="4" \
     --dataset_name ${DATASET_NAME} \
     --deepspeed local_scripts/zero3.json \
     --max_prompt_length 16384 \
-    --max_completion_length 768 \
+    --max_completion_length 1024 \
     --per_device_train_batch_size 1 \
     --gradient_accumulation_steps 1 \
     --learning_rate 1e-6 \
@@ -35,10 +35,10 @@ CUDA_VISIBLE_DEVICES=4,5,6,7 torchrun --nproc_per_node="4" \
     --weight_decay 0.01 \
     --bf16 \
     --gradient_checkpointing true \
-    --temporal false \
+    --temporal true \
     --len_control true \
     --attn_implementation flash_attention_2 \
-    --max_pixels 401408 \
+    --max_pixels 691200 \
     --num_train_epochs 1 \
     --run_name ${RUN_NAME} \
     --report_to wandb \
@@ -48,6 +48,5 @@ CUDA_VISIBLE_DEVICES=4,5,6,7 torchrun --nproc_per_node="4" \
     --beta 0.04 \
     --max_grad_norm 5 \
     --save_only_model false \
-    --resume_from_checkpoint log/vs2_qwen2_5vl_grpo_17k_1e-6_reward_3/checkpoint-3200 \
     --num_generations 8  # number of outputs G in grpo, reduce it would lead to faster training and smaller memory cost but higher variance  
     
