@@ -11,8 +11,8 @@ export LOG_PATH="./debug_log_grpo_17k_base768-768_reward_3_temporal.txt"
 
 SFT_Model_Path=videoscore2/vs2_qwen2_5vl_sft_17k_2e-4_2fps_768_768_8192
 DATASET_NAME=./Video-R1-data/grpo_17k.json
-OUTPUT_DIR=./log/vs2_qwen2_5vl_grpo_17k_1e-6_base768-768_reward_3_temporal
-RUN_NAME=vs2_qwen2_5vl_grpo_17k_1e-6_base768-768_reward_3_temporal
+OUTPUT_DIR=./log/vs2_qwen2_5vl_grpo_17k_5e-7_base768-768_reward_3_temporal
+RUN_NAME=vs2_qwen2_5vl_grpo_17k_5e-7_base768-768_reward_3_temporal
 
 wandb login
 
@@ -30,7 +30,7 @@ CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7 torchrun --nproc_per_node="8" \
     --max_completion_length 1024 \
     --per_device_train_batch_size 1 \
     --gradient_accumulation_steps 1 \
-    --learning_rate 1e-6 \
+    --learning_rate 5e-7 \
     --lr_scheduler_type "cosine" \
     --weight_decay 0.01 \
     --bf16 \
