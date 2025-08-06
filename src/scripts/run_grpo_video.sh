@@ -7,12 +7,12 @@ cd src/r1-v
 
 # Qwen/Qwen2.5-VL-7B-Instruct
 export DEBUG_MODE="true" # Enable Debug if you want to see the rollout of model during RL
-export LOG_PATH="./debug_log_grpo_17k_base768-768_reward_3_temporal.txt"
+export LOG_PATH="./debug_log_grpo_17k_base960-720_reward_3_temporal.txt"
 
-SFT_Model_Path=videoscore2/vs2_qwen2_5vl_sft_17k_2e-4_2fps_768_768_8192
+SFT_Model_Path=videoscore2/vs2_qwen2_5vl_sft_17k_2e-4_2fps_960_720_8192
 DATASET_NAME=./Video-R1-data/grpo_17k.json
 
-RUN_NAME=vs2_qwen2_5vl_grpo_17k_5e-7_base768-768_reward_3_temporal
+RUN_NAME=vs2_qwen2_5vl_grpo_17k_5e-7_base960-720_reward_3_temporal
 OUTPUT_DIR="./log/{$RUN_NAME}"
 
 wandb login
@@ -31,7 +31,7 @@ CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7 torchrun --nproc_per_node="8" \
     --max_completion_length 1024 \
     --per_device_train_batch_size 1 \
     --gradient_accumulation_steps 1 \
-    --learning_rate 5e-7 \
+    --learning_rate 1e-6 \
     --lr_scheduler_type "cosine" \
     --weight_decay 0.01 \
     --bf16 \
