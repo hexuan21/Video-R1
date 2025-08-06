@@ -22,7 +22,7 @@ CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7 torchrun --nproc_per_node="8" \
     --nnodes="1" \
     --node_rank="0" \
     --master_addr="127.0.0.1" \
-    --master_port="12366" \
+    --master_port="12367" \
     src/open_r1/grpo.py \
     --output_dir ${OUTPUT_DIR} \
     --model_name_or_path ${SFT_Model_Path} \
