@@ -6,7 +6,7 @@ cd src/r1-v
 # Set temporal to choose between T-GRPO and GRPO, and len_control to enable or disable the length control reward.
 
 # Qwen/Qwen2.5-VL-7B-Instruct
-ID=grpo_17k_1e-6_base768-768_reward3_temporal
+ID=grpo_17k_5e-7_base768-768_reward3_temporal
 export DEBUG_MODE="true" # Enable Debug if you want to see the rollout of model during RL
 export LOG_PATH="./debug_log_$ID.txt"
 
@@ -32,7 +32,7 @@ CUDA_VISIBLE_DEVICES=4,5,6,7 torchrun --nproc_per_node="4" \
     --max_completion_length 1024 \
     --per_device_train_batch_size 1 \
     --gradient_accumulation_steps 1 \
-    --learning_rate 1e-6 \
+    --learning_rate 5e-7 \
     --lr_scheduler_type "cosine" \
     --weight_decay 0.01 \
     --bf16 \
