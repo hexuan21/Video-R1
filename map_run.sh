@@ -15,6 +15,8 @@ export NCCL_TIMEOUT=3600
 export NCCL_DEBUG=INFO
 export NCCL_IB_DISABLE=1 
 
+export PYTORCH_CUDA_ALLOC_CONF="expandable_segments:True"
+
 unset https_proxy; unset http_proxy
 export https_proxy="http://100.64.117.161:3128"
 export http_proxy="http://100.64.117.161:3128"
