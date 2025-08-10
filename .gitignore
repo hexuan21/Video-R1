@@ -1,3 +1,5 @@
 src/model_upload_dir/
 src/qwen-vl-utils/src/qwen_vl_utils/__pycache__
 src/r1-v/debug*.txt
+
+*.slurm
