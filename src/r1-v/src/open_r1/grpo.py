@@ -146,11 +146,14 @@ def accuracy_reward(completions, solution, **kwargs):
                     if abs(v_gt-v_out) == 0 and abs(t_gt-t_out) == 0 and abs(p_gt-p_out) == 0:
                         reward = 1.0
                     elif abs(v_gt-v_out) <=1 and abs(t_gt-t_out) <= 1 and abs(p_gt-p_out) <= 1 \
-                        and abs(v_gt-v_out)+abs(t_gt-t_out)+abs(p_gt-p_out) <= 1:
-                        reward = 0.6
+                        and abs(v_gt-v_out)+abs(t_gt-t_out)+abs(p_gt-p_out) == 1:
+                        reward = 0.7
                     elif abs(v_gt-v_out) <=1 and abs(t_gt-t_out) <= 1 and abs(p_gt-p_out) <= 1 \
-                        and abs(v_gt-v_out)+abs(t_gt-t_out)+abs(p_gt-p_out) <= 2:
-                        reward = 0.2
+                        and abs(v_gt-v_out)+abs(t_gt-t_out)+abs(p_gt-p_out) == 2:
+                        reward = 0.4
+                    elif abs(v_gt-v_out) <=1 and abs(t_gt-t_out) <= 1 and abs(p_gt-p_out) <= 1 \
+                        and abs(v_gt-v_out)+abs(t_gt-t_out)+abs(p_gt-p_out) == 3:
+                        reward = 0.1
                     # elif abs(v_gt-v_out) <=1 and abs(t_gt-t_out) <= 1 and abs(p_gt-p_out) <= 1 \
                     #     and abs(v_gt-v_out)+abs(t_gt-t_out)+abs(p_gt-p_out) <= 2:
                     #     reward = 0.5
@@ -214,10 +217,34 @@ def format_reward(completions, **kwargs):
     matches = [re.fullmatch(pattern, content, re.DOTALL) for content in completion_contents]
     return [1.0 if match else 0.0 for match in matches]
 
+def thinking_length_reward(completions, **kwargs):
+    """Reward function that encourages detailed thinking."""
+    pattern = r"<think>.*?</think>"
+    completion_contents = [completion[0]["content"] for completion in completions]
+    matches = [re.fullmatch(pattern, content, re.DOTALL) for content in completion_contents]
+    rewards=[]
+    for match in matches:
+        if match:
+            thinking = match.group(1).strip()
+            words=re.findall(r'\b\w+\b', thinking)
+            if len(words)<400:
+                reward=0.0
+            elif len(words)>=400 and len(words)<500:
+                reward=0.5
+            elif len(words)>=500 and len(words)<600:
+                reward=0.8
+            elif len(words)>=600 and len(words)<800:
+                reward=1.0
+            else:
+                reward=0.0
+        else:
+            reward=0.0
+        rewards.append(reward)    
 
 reward_funcs_registry = {
     "accuracy": accuracy_reward,
     "format": format_reward,
+    "thinking_length":thinking_length_reward,
 }
 
 SYSTEM_PROMPT = (
