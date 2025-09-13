@@ -31,7 +31,7 @@ CUDA_VISIBLE_DEVICES=2,3,6,7 torchrun --nproc_per_node="4" \
     --max_prompt_length 16384 \
     --max_completion_length 1024 \
     --per_device_train_batch_size 1 \
-    --gradient_accumulation_steps 1 \
+    --gradient_accumulation_steps 16 \
     --learning_rate 1e-6 \
     --lr_scheduler_type "cosine" \
     --weight_decay 0.01 \
@@ -50,5 +50,6 @@ CUDA_VISIBLE_DEVICES=2,3,6,7 torchrun --nproc_per_node="4" \
     --beta 0.04 \
     --max_grad_norm 5 \
     --save_only_model false \
+    --resume_from_checkpoint ./log/vs2_qwen2_5vl_grpo_17k_1e-6_base960_720_reward4_temporal/checkpoint-2400 \
     --num_generations 6  # number of outputs G in grpo, reduce it would lead to faster training and smaller memory cost but higher variance  
     

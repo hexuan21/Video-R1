@@ -18,7 +18,7 @@ OUTPUT_DIR="./log/$RUN_NAME"
 
 wandb login
 
-CUDA_VISIBLE_DEVICES=0,1,2,3 torchrun --nproc_per_node="4" \
+CUDA_VISIBLE_DEVICES=3,4,5,6 torchrun --nproc_per_node="4" \
     --nnodes="1" \
     --node_rank="0" \
     --master_addr="127.0.0.1" \

@@ -244,7 +244,6 @@ def thinking_length_reward(completions, **kwargs):
 reward_funcs_registry = {
     "accuracy": accuracy_reward,
     "format": format_reward,
-    "thinking_length":thinking_length_reward,
 }
 
 SYSTEM_PROMPT = (
