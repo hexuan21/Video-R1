@@ -6,14 +6,14 @@ cd src/r1-v
 # Set temporal to choose between T-GRPO and GRPO, and len_control to enable or disable the length control reward.
 
 # Qwen/Qwen2.5-VL-7B-Instruct
-ID=grpo_25k_1e-6_base960_720_reward4_new
+ID=grpo_27k_1e-6_base_qwen2_5_vl
 export DEBUG_MODE="true" # Enable Debug if you want to see the rollout of model during RL
 export LOG_PATH="./debug_log_$ID.txt"
 
-SFT_Model_Path=videoscore2/vs2_qwen2_5vl_sft_17k_2e-4_2fps_960_720_8192
-DATASET_NAME=./Video-R1-data/grpo_25k.json
+SFT_Model_Path=Qwen/Qwen2.5-VL-7B-Instruct
+DATASET_NAME=./Video-R1-data/grpo_27k.json
 
-RUN_NAME="vs2_qwen2_5vl_$ID"
+RUN_NAME="vs2_$ID"
 OUTPUT_DIR="./log/$RUN_NAME"
 
 wandb login --relogin $WANDB_API_KEY
@@ -46,7 +46,7 @@ CUDA_VISIBLE_DEVICES=4,5,6,7 torchrun --nproc_per_node="4" \
     --report_to wandb \
     --log_completions true \
     --logging_steps 5 \
-    --save_steps 200 \
+    --save_steps 100 \
     --beta 0.04 \
     --max_grad_norm 5 \
     --save_only_model false \
